@@ -1,0 +1,43 @@
+version: "3.8"
+
+# Defining the behaviour of the containers
+services:
+
+  # The database where all the info is stored
+  postgresDB:
+    image: library/postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - instrumentality-iroha-blockchain
+    environment:
+      - POSTGRES_USER=orchestrator
+      - POSTGRES_PASSWORD=instrumentality-test-pass
+      - POSTGRES_DB=instrumentality
+
+  # The Iroha container
+  irohaNode:
+    image: hyperledger/iroha:latest
+    restart: always
+    networks:
+      - instrumentality-iroha-blockchain
+    ports:
+      - "50051:50051"
+    volumes:
+      - "./iroha:/opt/iroha_data"
+      - "blockstore:/tmp/block_store"
+    environment:
+      - IROHA_POSTGRES_HOST=postgresDB
+      - POSTGRES_PORT=5432
+      - POSTGRES_PASSWORD=instrumentality-test-pass
+      - POSTGRES_USER=orchestrator
+      - KEY=genesisNode
+    depends_on:
+      - postgresDB
+
+networks:
+  instrumentality-iroha-blockchain:
+
+volumes:
+  blockstore:
