@@ -26,4 +26,5 @@ in the end providing the future employers with a bigger picture of your skillset
 ### Follow the next steps if you just need to test the API:
 
 1. Clone the repository: `git clone https://gitlab.com/instrumentality-foundation/instrumentality-blockchain-api.git && cd instrumentality-blockchain-api`
-2. `docker-compose -f docker-compose.yaml up`
+2. `docker-compose -f docker-compose.yaml up` to bring up the node
+3. run `python app.py` to start the API server
