@@ -8,5 +8,10 @@ def hello_world():
     return 'Hello World!'
 
 
+@app.route('/account/create')
+def account_create():
+    return ''
+
+
 if __name__ == '__main__':
     app.run()
