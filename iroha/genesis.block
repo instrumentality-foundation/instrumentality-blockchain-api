@@ -42,71 +42,61 @@
                 },
                 {
                   "createRole": {
-                    "roleName": "Orchestrator"
+                    "roleName": "Orchestrator",
+                    "permissions": [
+                      "can_create_account",
+                      "can_create_domain",
+                      "can_add_peer",
+                      "can_remove_peer",
+                      "can_append_role",
+                      "can_create_role",
+                      "can_detach_role"
+                    ]
                   }
                 },
                 {
                   "createRole": {
-                    "roleName": "developer",
+                    "roleName": "Developer",
                     "permissions": [
                       "can_receive",
-                      "can_get_domain_accounts",
-                      "can_get_domain_acc_detail",
                       "can_get_my_acc_detail",
                       "can_get_my_account",
                       "can_get_my_acc_ast",
                       "can_get_my_acc_ast_txs",
                       "can_get_my_acc_txs",
-                      "can_read_assets",
-                      "can_get_my_txs",
-                      "can_get_peers"
-                    ]
-                  }
-                },
-                {
-                  "createRole": {
-                    "roleName": "company",
-                    "permissions": [
-                      "can_create_account",
-                      "can_set_detail",
-                      "can_create_asset",
-                      "can_transfer",
-                      "can_add_domain_asset_qty",
-                      "can_subtract_domain_asset_qty",
-                      "can_create_domain"
+                      "can_get_my_txs"
                     ]
                   }
                 },
                 {
                   "createDomain": {
-                    "domainId": "instrumentality",
-                    "defaultRole": "user"
-                  }
-                },
-                {
-                  "createAsset": {
-                    "assetName": "coin",
-                    "domainId": "test",
-                    "precision": 2
+                    "domainId": "Instrumentality",
+                    "defaultRole": "Developer"
                   }
                 },
                 {
                   "createAccount": {
-                    "accountName": "admin",
-                    "domainId": "test",
-                    "publicKey": "8882c62a373cb2e85df2eed62f9d157e8ac6d16540f72ece92eb4e17fd81ccc4"
+                    "accountName": "alexandru_balan",
+                    "domainId": "Instrumentality",
+                    "publicKey": "3fdaadfdfd373b670e9f08c62b082d96c0338a6d68f3927e772a26f2c9793d0b"
                   }
                 },
                 {
                   "appendRole": {
-                    "accountId": "admin@test",
-                    "roleName": "admin"
+                    "accountId": "alexandru_balan@Instrumentality",
+                    "roleName": "Orchestrator"
                   }
                 },
                 {
                   "appendRole": {
-                    "accountId": "admin@test",
-                    "roleName": "money_creator"
+                    "accountId": "alexandru_balan@Instrumentality",
+                    "roleName": "SkillMaker"
+                  }
+                },
+                {
+                  "appendRole": {
+                    "accountId": "alexandru_balan@Instrumentality",
+                    "roleName": "Company"
                   }
                 }
               ],
