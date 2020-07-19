@@ -1,9 +1,0 @@
-setup.py
-account/__init__.py
-account/account.py
-instrumentality_iroha_api.egg-info/PKG-INFO
-instrumentality_iroha_api.egg-info/SOURCES.txt
-instrumentality_iroha_api.egg-info/dependency_links.txt
-instrumentality_iroha_api.egg-info/top_level.txt
-private/__init__.py
-private/constants.py
