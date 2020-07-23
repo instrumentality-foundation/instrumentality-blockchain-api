@@ -4,6 +4,7 @@ This library handles account creation and management
 
 from iroha import Iroha, IrohaCrypto, IrohaGrpc
 import json
+from binascii import Error
 
 # Private file with credentials
 from private import constants
@@ -82,3 +83,52 @@ def create(acc_name, domain_name):
             response['code'] = 200
             return encoder.encode(response), 200
 
+
+def auth(account_name, private_key):
+    """
+    This method is used to authenticate an existing user on the blockchain. Since Iroha expect an account_name when
+    retrieving and account we first try to retrieve it be name. If the name doesn't exist we throw a 404 response.
+    If the name exists we go ahead and check the private key. Since the account name is easily guessable or obtainable,
+    we must use the private key to make sure that only the account owner can authenticate.
+
+    :param str account_name: Unique name of the account
+    :param str private_key:
+    :return: JSON response, status code
+    """
+
+    # Gethering tools
+    iroha_net = IrohaGrpc(constants.iroha_network)
+    response = {}
+    encoder = json.encoder.JSONEncoder()
+
+    # Defining the query
+    new_query = constants.iroha_client.query(
+        'GetSignatories',
+        account_id=account_name
+    )
+
+    # Signing the query and sending it to network
+    IrohaCrypto.sign_query(new_query, constants.private_key)
+    iroha_response = iroha_net.send_query(new_query)
+    keys = iroha_response.signatories_response.keys
+    if not keys:
+        response['status'] = 'error'
+        response['msg'] = 'Account not found.'
+        return encoder.encode(response), 404
+
+    public_key = keys[0]
+
+    # Verify if private key generates the same public key as the one from network
+    try:
+        if IrohaCrypto.derive_public_key(private_key).decode('utf-8') != public_key:
+            response['status'] = 'error'
+            response['msg'] = "Authentication failed. Private key did not match."
+            return encoder.encode(response), 403
+        else:
+            response['status'] = 'success'
+            response['msg'] = "Authentication successful."
+            return encoder.encode(response), 200
+    except Error as err:
+        response['status'] = 'error'
+        response['msg'] = str(err)
+        return encoder.encode(response), 403

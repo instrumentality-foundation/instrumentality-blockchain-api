@@ -50,7 +50,8 @@
                       "can_remove_peer",
                       "can_append_role",
                       "can_create_role",
-                      "can_detach_role"
+                      "can_detach_role",
+                      "can_get_all_signatories"
                     ]
                   }
                 },
