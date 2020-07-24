@@ -1,0 +1,5 @@
+venv/
+private/
+dist/
+iroha/
+build/
