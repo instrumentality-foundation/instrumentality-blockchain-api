@@ -5,7 +5,13 @@ from account import account
 import json
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app, resources={
+    r"/*":
+        {
+            "origins": ['http://localhost:4200', 'http://localhost:8000'],
+            "supports_credentials": "true"
+        }
+})
 
 
 @app.route('/')
@@ -25,9 +31,11 @@ def account_auth():
     return account.auth(req_body['username'], req_body['privateKey'])
 
 
-@app.route('/redirect/fullapp')
-def redirect_fullapp():
-    return redirect("http://192.168.1.4:5000/home")
+@app.route('/account/verify', methods=['POST'])
+def account_verify():
+    req_body = request.get_json()
+
+    return account.verify(req_body['username'], req_body['token'])
 
 
 if __name__ == '__main__':

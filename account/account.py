@@ -5,6 +5,11 @@ This library handles account creation and management
 from iroha import Iroha, IrohaCrypto, IrohaGrpc
 import json
 from binascii import Error
+import redis
+from secrets import token_hex
+from datetime import timedelta
+from flask import make_response
+
 
 # Private file with credentials
 from private import constants
@@ -111,6 +116,7 @@ def auth(account_name, private_key):
     IrohaCrypto.sign_query(new_query, constants.private_key)
     iroha_response = iroha_net.send_query(new_query)
     keys = iroha_response.signatories_response.keys
+
     if not keys:
         response['status'] = 'error'
         response['msg'] = 'Account not found.'
@@ -127,8 +133,59 @@ def auth(account_name, private_key):
         else:
             response['status'] = 'success'
             response['msg'] = "Authentication successful."
+
+            # Generate a token and save in redis alongside public key
+            # The token will expire in 3 days
+            r = redis.Redis(constants.redis_network, '6379', db=0)
+
+            t = r.get(account_name)
+            if not t:
+                token = token_hex(32)
+                r.setex(account_name, timedelta(days=1), token)
+                response['token'] = token
+            else:
+                response['token'] = t.decode('utf-8')
+
             return encoder.encode(response), 200
     except Error as err:
         response['status'] = 'error'
         response['msg'] = str(err)
         return encoder.encode(response), 403
+
+
+def verify(account_name, token):
+    """
+    This method verifies if some account can be authenticated in main application.
+    A token is generated in the redis database after a successful verification of the
+    private key.
+
+    If that token is still in the database (it hasn't expired) then allow authentication.
+
+    :param str account_name:  The unique name of the account on the chain.
+    :param str token: A token string
+    :return: True if account has unexpired token in redis. Otherwise False.
+    """
+
+    response = {}
+    encoder = json.encoder.JSONEncoder()
+
+    r = redis.Redis(constants.redis_network, '6379')
+    t = ''
+    if r.get(account_name):
+        t = r.get(account_name).decode('utf-8')
+
+    if not t:
+        response['status'] = 'error'
+        response['msg'] = 'Not authorized to access this route'
+
+        return encoder.encode(response), 401
+    elif token == t:
+        response['status'] = 'success'
+        response['msg'] = 'Authorization succeeded'
+
+        return encoder.encode(response), 200
+    else:
+        response['status'] = 'error'
+        response['msg'] = 'Not authorized to access this route'
+
+        return encoder.encode(response), 401

@@ -36,8 +36,20 @@ services:
     depends_on:
       - postgresDB
 
+  redis:
+    image: redis:alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    hostname: redis
+    networks:
+      - instrumentality-iroha-blockchain
+    volumes:
+      - redis-data:/data
+
 networks:
   instrumentality-iroha-blockchain:
 
 volumes:
   blockstore:
+  redis-data:
