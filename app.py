@@ -8,7 +8,7 @@ app = Flask(__name__)
 cors = CORS(app, resources={
     r"/*":
         {
-            "origins": ['http://localhost:4200', 'http://localhost:8000'],
+            "origins": ['http://localhost:4200', 'http://localhost:8080'],
             "supports_credentials": "true"
         }
 })
